@@ -43,6 +43,42 @@ function draw() {
         rect(map(frame.t, song.duration() * z1 * 1000, song.duration() * z2 * 1000, 0, width), height * 3 / 4, width / 64, width / 64);
       }
     }
+    line(map(z1, 0, 1, 0, width), height * 3 / 4 * 7 / 8, map(z1, 0, 1, 0, width), height * 3 / 4 * 13 / 16)
+    line(map(z2, 0, 1, 0, width), height * 3 / 4 * 7 / 8, map(z2, 0, 1, 0, width), height * 3 / 4 * 13 / 16)
+    let clicky1;
+    let clicky2;
+    if (collidePointLine(mouseX, mouseY, map(z1, 0, 1, 0, width), height * 3 / 4 * 7 / 8, map(z1, 0, 1, 0, width), height * 3 / 4 * 13 / 16, 4) && mouseIsPressed && !clicky2) {
+      clicky1 = setInterval(() => {
+        if (mouseIsPressed) {
+          z1 = map(mouseX, 0, width, 0, 1);
+          if (z1 > z2 - 0.01) {
+            z1 = z2 - 0.01
+          }
+          if (z1 < 0) {
+            z1 = 0;
+          }
+        } else {
+          clearInterval(clicky1)
+          clicky1 = undefined
+        }
+      })
+    }
+    if (collidePointLine(mouseX, mouseY, map(z2, 0, 1, 0, width), height * 3 / 4 * 7 / 8, map(z2, 0, 1, 0, width), height * 3 / 4 * 13 / 16, 4) && mouseIsPressed && !clicky1) {
+      clicky2 = setInterval(() => {
+        if (mouseIsPressed) {
+          z2 = map(mouseX, 0, width, 0, 1);
+          if (z2 < z1 + 0.01) {
+            z2 = z1 + 0.01
+          }
+          if (z2 > 1) {
+            z2 = 1;
+          }
+        } else {
+          clearInterval(clicky2)
+          clicky2 = undefined
+        }
+      })
+    }
   }
 }
 
@@ -51,7 +87,7 @@ function load(file) {
     removeElements();
     inColor = createInput("", "color").position(16, 16).id("color-picker");
     test = createButton("Test").position(80, 16).mousePressed(test);
-    fft = webWorker();
+    fft = song.getPeaks(width * 64);
   });
 }
 
@@ -133,18 +169,4 @@ function hexToRGB(hex) {
   let c = color(hex);
   console.log(c);
   return [c.levels[0], c.levels[1], c.levels[2]]
-}
-
-function webWorker(s) {
-  if (window.Worker) {
-    w = new Worker('worker.js');
-    w.postMessage(s);
-    console.log('Posted to web worker')
-    w.onmessage = function (event) {
-      console.log("Message received");
-      console.log(event);
-      w.terminate();
-      return (event);
-    };
-  }
 }
