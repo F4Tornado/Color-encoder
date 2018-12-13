@@ -21,7 +21,7 @@ void setup() {
   delay(250);
   writeColor(0, 0, 0, 255);
   delay(250);
-  writeColor(255, 255, 255, 255);
+  writeColor(0, 0, 0, 0);
   digitalWrite(LED_BUILTIN, HIGH);
   delay(250);
   digitalWrite(LED_BUILTIN, LOW);

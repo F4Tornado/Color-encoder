@@ -1,12 +1,12 @@
 document.addEventListener('contextmenu', event => event.preventDefault());
 const encoded = [];
 let keyframes = [{
-  r: 255,
-  b: 255,
-  g: 255,
+  r: 0,
+  b: 0,
+  g: 0,
   t: 0
 }];
-let songIn, song, fft, inColor, z1, z2, testing;
+let songIn, song, fft, inColor, howTo, z1, z2, testing;
 
 function setup() {
   songIn = createFileInput(load).position(16, 16).style("color", "#ebebeb").style("z-index", 1000);
@@ -86,7 +86,18 @@ function load(file) {
   song = loadSound(file, () => {
     removeElements();
     inColor = createInput("", "color").position(16, 16).id("color-picker");
-    test = createButton("Test").position(80, 16).mousePressed(test);
+    test = createButton("Test").position(90, 16).mousePressed(test);
+    howTo = createButton("How To Use").position(144, 16).mousePressed(() => {
+      window.open("https://github.com/F4Tornado/color-encoder#how-to-use")
+    })
+    copy = createButton("Copy code").position(242, 16).mousePressed(() => {
+      generate()
+      let text = createElement("textarea")
+      text.value(encoded.toString());
+      text.elt.select()
+      document.execCommand("copy")
+      text.remove()
+    })
     fft = song.getPeaks(width * 64);
   });
 }
