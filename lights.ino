@@ -1,7 +1,7 @@
-int w = 10;
-int r = 12;
-int g = 13;
-int b = 11; 
+int w = 8;
+int r = 10;
+int g = 11;
+int b = 9;
 int brightness = 12;
 //r, g, b, w, time
 int seq[] = {};
@@ -14,14 +14,14 @@ void setup() {
   pinMode(b, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   writeColor(255, 0, 0, 0);
-  delay(250);
+  delay(500);
   writeColor(0, 255, 0, 0);
-  delay(250);
+  delay(500);
   writeColor(0, 0, 255, 0);
-  delay(250);
+  delay(500);
   writeColor(0, 0, 0, 255);
-  delay(250);
-  writeColor(0, 0, 0, 0);
+  delay(500);
+  writeColor(255, 255, 255, 255);
   digitalWrite(LED_BUILTIN, HIGH);
   delay(250);
   digitalWrite(LED_BUILTIN, LOW);
@@ -45,7 +45,7 @@ void loop() {
 
 void writeColor(int ri, int gi, int bi, int wi) {
   analogWrite(r, (int)ri*(brightness/100.0));
-  analogWrite(g, (int)gi*(brightness/400.0));
-  analogWrite(b, (int)bi*(brightness/400.0));
+  analogWrite(g, (int)gi*(brightness/200.0));
+  analogWrite(b, (int)bi*(brightness/200.0));
   analogWrite(w, (int)wi*(brightness/100.0));
 }
