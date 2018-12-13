@@ -113,8 +113,9 @@ function mousePressed() {
     })
     console.log(keyframes)
   } else if (mouseButton == RIGHT) {
+    console.log("yee")
     for (var i = keyframes.length - 1; i >= 0; i--) {
-      if (collidePointRect(mouseX, mouseY, map(keyframes[i].t, 0, song.duration() * 1000, 0, width) - width / 128, height * 3 / 4 - width / 128, width / 64, width / 64)) {
+      if (collidePointRect(mouseX, mouseY, map(keyframes[i].t, song.duration() * z1 * 1000, song.duration() * z2 * 1000, 0, width) - width / 128, height * 3 / 4 - width / 128, width / 64, width / 64)) {
         keyframes.splice(i, 1);
       }
     }
