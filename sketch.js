@@ -1,12 +1,13 @@
 document.addEventListener('contextmenu', event => event.preventDefault());
 const encoded = [];
-let keyframes = [{
+const layers = [[{
   r: 0,
   b: 0,
   g: 0,
   t: 0
-}];
-let songIn, song, fft, inColor, howTo, z1, z2, testing;
+}]];
+let selectedLayer = 0;
+let songIn, song, fft, inColor, howTo, z1, z2, testing, addLayer;
 
 function setup() {
   songIn = createFileInput(load).position(16, 16).style("color", "#ebebeb").style("z-index", 1000);
@@ -36,7 +37,7 @@ function draw() {
         }
         stroke(235)
       }
-      for (let frame of keyframes) {
+      for (let frame of layers[selectedLayer]) {
         strokeWeight(2)
         fill(frame.r, frame.g, frame.b);
         line(map(frame.t, song.duration() * z1 * 1000, song.duration() * z2 * 1000, 0, width), height, map(frame.t, song.duration() * z1 * 1000, song.duration() * z2 * 1000, 0, width), height * 3 / 4)
@@ -86,11 +87,14 @@ function load(file) {
   song = loadSound(file, () => {
     removeElements();
     inColor = createInput("", "color").position(16, 16).id("color-picker");
-    test = createButton("Test").position(90, 16).mousePressed(test);
-    howTo = createButton("How To Use").position(144, 16).mousePressed(() => {
+    addLayer = createButton("Add a layer").position(90, 16).mousePressed(() => {
+      layers.push([{r:0, g:0, b:0, t:0}]);
+    })
+    test = createButton("Test").position(184, 16).mousePressed(test);
+    howTo = createButton("How To Use").position(242, 16).mousePressed(() => {
       window.open("https://github.com/F4Tornado/color-encoder#how-to-use")
     })
-    copy = createButton("Copy code").position(242, 16).mousePressed(() => {
+    copy = createButton("Copy code").position(336, 16).mousePressed(() => {
       generate()
       let text = createElement("textarea")
       text.value(encoded.toString());
@@ -105,15 +109,14 @@ function load(file) {
 function mousePressed() {
   if (mouseY > height * 3 / 4 && mouseButton == LEFT) {
     c = hexToRGB(inColor.value());
-    keyframes.push({
+    layers[selectedLayer].push({
       r: c[0],
       g: c[1],
       b: c[2],
       t: floor((mouseX / width) * song.duration() * 1000 * (z2 - z1) + z1 * song.duration())
     })
-    console.log(keyframes)
+    console.log(layers[selectedLayer])
   } else if (mouseButton == RIGHT) {
-    console.log("yee")
     for (var i = keyframes.length - 1; i >= 0; i--) {
       if (collidePointRect(mouseX, mouseY, map(keyframes[i].t, song.duration() * z1 * 1000, song.duration() * z2 * 1000, 0, width) - width / 128, height * 3 / 4 - width / 128, width / 64, width / 64)) {
         keyframes.splice(i, 1);
@@ -124,7 +127,7 @@ function mousePressed() {
 
 const generate = () => {
   encoded.splice(0, encoded.length);
-  keyframes.sort((a, b) => {
+  layers[selectedLayer].sort((a, b) => {
     return a.t - b.t
   })
   for (let i = 0; i < keyframes.length; i++) {
