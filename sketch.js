@@ -153,21 +153,16 @@ const generate = () => {
       if (w > b) {
         w = b;
       }
-      let t;
-      if (j == layers[i].length-1) {
-        t = song.duration()*1000-layers[i][j].t
-      } else {
-        t = layers[i][j+1].t-layers[i][j].t
-      }
       thingoo.push(r-w);
       thingoo.push(g-w);
       thingoo.push(b-w);
       thingoo.push(w);
-      thingoo.push(t);
+      thingoo.push(layers[i][j].t);
     }
     encodeds.push(thingoo);
   }
-  
+  const merged = merge(encodeds);
+  console.log(merged)
 }
 
 function test() {
@@ -199,4 +194,41 @@ function hexToRGB(hex) {
   let c = color(hex);
   console.log(c);
   return [c.levels[0], c.levels[1], c.levels[2]]
+}
+
+function merge(thingoo) {
+  let merged = [];
+  for (let i = 0; i < thingoo.length; i++) {
+    merged = merged.concat(thingoo[i]);
+  }
+  const testy = []
+  for (let i = 0; i < merged.length/5; i++) {
+    let thingy = [];
+    let r = merged[i*5];
+    let g = merged[i*5+1];
+    let b = merged[i*5+2];
+    let w = merged[i*5+3];
+    let t = merged[i*5+4];
+    let l;
+    if (i == merged.length/5-1) {
+      l = song.duration()*1000-t;
+    } else {
+      l = merged[(i+1)*5+4]-t;
+    }
+    thingy.push(r);
+    thingy.push(g);
+    thingy.push(b);
+    thingy.push(w);
+    thingy.push(t);
+    thingy.push(l);
+    testy.push(thingy);
+  }
+  testy.sort((a, b) => {
+    return a.t-b.t;
+  });
+  let ret = [];
+  for (let i = 0; i < testy.length; i++) {
+    ret = ret.concat(testy[i])
+  }
+  return ret;
 }
