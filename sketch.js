@@ -90,15 +90,11 @@ function load(file) {
     addLayer = createButton("Add a layer").position(90, 16).mousePressed(() => {
       layers.push([{r:0, g:0, b:0, t:0}]);
     })
-    nextLayer = createButton("Next layer").position(184, 16).mousePressed(() => {
-      selectedLayer++;
-      selectedLayer = selectedLayer%layers.length;
-    })
-    test = createButton("Test").position(272, 16).mousePressed(test);
-    howTo = createButton("How To Use").position(336, 16).mousePressed(() => {
+    test = createButton("Test").position(184, 16).mousePressed(test);
+    howTo = createButton("How To Use").position(242, 16).mousePressed(() => {
       window.open("https://github.com/F4Tornado/color-encoder#how-to-use")
     })
-    copy = createButton("Copy code").position(430, 16).mousePressed(() => {
+    copy = createButton("Copy code").position(336, 16).mousePressed(() => {
       generate()
       let text = createElement("textarea")
       text.value(encoded.toString());
@@ -121,9 +117,9 @@ function mousePressed() {
     })
     console.log(layers[selectedLayer])
   } else if (mouseButton == RIGHT) {
-    for (var i = layers[selectedLayer].length - 1; i >= 0; i--) {
-      if (collidePointRect(mouseX, mouseY, map(layers[selectedLayer][i].t, song.duration() * z1 * 1000, song.duration() * z2 * 1000, 0, width) - width / 128, height * 3 / 4 - width / 128, width / 64, width / 64)) {
-        layers[selectedLayer].splice(i, 1);
+    for (var i = keyframes.length - 1; i >= 0; i--) {
+      if (collidePointRect(mouseX, mouseY, map(keyframes[i].t, song.duration() * z1 * 1000, song.duration() * z2 * 1000, 0, width) - width / 128, height * 3 / 4 - width / 128, width / 64, width / 64)) {
+        keyframes.splice(i, 1);
       }
     }
   }
@@ -131,43 +127,32 @@ function mousePressed() {
 
 const generate = () => {
   encoded.splice(0, encoded.length);
-  for (let i = 0; i < layers.length; i++) {
-    layers[i].sort((a, b) => {
-      return a.t-b.t
-    })
-  }
-  const encodeds = [];
-  for (let i = 0; i < layers.length; i++) {
-    let thingoo = [];
-    for (let j = 0; j < layers[i].length; j++) {
-      let r = layers[i][j].r;
-      let g = layers[i][j].g;
-      let b = layers[i][j].b;
-      let w = 255;
-      if (w > r) {
-        w = r;
-      }
-      if (w > g) {
-        w = g;
-      }
-      if (w > b) {
-        w = b;
-      }
-      let t;
-      if (j == layers[i].length-1) {
-        t = song.duration()*1000-layers[i][j].t
-      } else {
-        t = layers[i][j+1].t-layers[i][j].t
-      }
-      thingoo.push(r-w);
-      thingoo.push(g-w);
-      thingoo.push(b-w);
-      thingoo.push(w);
-      thingoo.push(t);
+  layers[selectedLayer].sort((a, b) => {
+    return a.t - b.t
+  })
+  for (let i = 0; i < keyframes.length; i++) {
+    let r = keyframes[i].r;
+    let g = keyframes[i].g;
+    let b = keyframes[i].b;
+    let w;
+    w = r;
+    if (g < w) {
+      w = g;
     }
-    encodeds.push(thingoo);
+    if (b < w) {
+      w = b;
+    }
+    encoded.push(r - w);
+    encoded.push(g - w);
+    encoded.push(b - w);
+    encoded.push(w);
+    if (keyframes[i + 1]) {
+      encoded.push(keyframes[i + 1].t - keyframes[i].t)
+    } else {
+      encoded.push((song.duration() * 1000) - keyframes[i].t)
+    }
+    console.log(encoded)
   }
-  
 }
 
 function test() {
